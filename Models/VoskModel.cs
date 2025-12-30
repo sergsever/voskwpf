@@ -25,6 +25,7 @@ namespace voskwpf.Models
 		//private static object writer_lock = new object(); 
 		private static Mutex writer_mutex = new Mutex();
 		static VoskRecognizer? recognizer;
+		//private static Model? dictionary = null;
 
 		//private bool isWorking = true;
 		Thread voskLoop;
@@ -102,7 +103,9 @@ namespace voskwpf.Models
 		{
 			Debug.WriteLine("start thread: " + Thread.CurrentThread.ManagedThreadId);
 
-			Model dict = new /*Model(@"C:\Sound\vosk-model-small-en-us-0.15");*/ Model(@"C:\sound\vosk-model-en-us-0.22");
+				Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
+				//Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22");
+			
 			recognizer = null;
 			recognizer = new VoskRecognizer(dict, 16000f);
 			WaveInEvent waveIn = new WaveInEvent();
