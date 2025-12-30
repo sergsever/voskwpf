@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{1B192FF3-26F6-4D4B-B29E-2D2C31C0B8BC}|voskwpf.csproj|solutionrelative:models\\voskmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{1B192FF3-26F6-4D4B-B29E-2D2C31C0B8BC}|voskwpf.csproj|c:\\work\\voskwpf\\voskwpf.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1B192FF3-26F6-4D4B-B29E-2D2C31C0B8BC}|voskwpf.csproj|solutionrelative:voskwpf.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1B192FF3-26F6-4D4B-B29E-2D2C31C0B8BC}|voskwpf.csproj|c:\\work\\voskwpf\\viewmodels\\voskviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1B192FF3-26F6-4D4B-B29E-2D2C31C0B8BC}|voskwpf.csproj|solutionrelative:viewmodels\\voskviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -18,11 +22,23 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "voskwpf.csproj",
+              "DocumentMoniker": "C:\\work\\voskwpf\\voskwpf.csproj",
+              "RelativeDocumentMoniker": "voskwpf.csproj",
+              "ToolTip": "C:\\work\\voskwpf\\voskwpf.csproj",
+              "RelativeToolTip": "voskwpf.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-30T06:58:53.553Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "VoskViewModel.cs",
               "DocumentMoniker": "C:\\work\\voskwpf\\ViewModels\\VoskViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\VoskViewModel.cs",
@@ -30,7 +46,8 @@
               "RelativeToolTip": "ViewModels\\VoskViewModel.cs",
               "ViewState": "AgIAAEYAAAAAAAAAAAAWwEkAAABJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-29T09:17:52.766Z"
+              "WhenOpened": "2025-12-29T09:17:52.766Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -40,7 +57,7 @@
               "RelativeDocumentMoniker": "Models\\VoskModel.cs",
               "ToolTip": "C:\\work\\voskwpf\\Models\\VoskModel.cs",
               "RelativeToolTip": "Models\\VoskModel.cs",
-              "ViewState": "AgIAAGEAAAAAAAAAAAAQwHAAAABJAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAE0AAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-24T09:13:32.666Z",
               "EditorCaption": ""

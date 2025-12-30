@@ -57,6 +57,7 @@ namespace voskwpf.Models
 			IsWorking = false;
 
 			voskLoop.Join();
+			Debug.WriteLine("End thread: " + voskLoop.ManagedThreadId);
 
 			//voskLoop.Interrupt();
 			
@@ -66,8 +67,7 @@ namespace voskwpf.Models
 
 		private void SomeRecorded(object? sender, WaveInEventArgs e)
 		{
-			try
-			{
+			
 				Console.WriteLine("Event:\n");
 				
 				writer_mutex.WaitOne();
@@ -75,7 +75,7 @@ namespace voskwpf.Models
 				
 					writer?.Write(e.Buffer, 0, e.BytesRecorded);
 
-					recognizer?.Reset();
+					//recognizer?.Reset();
 					recognizer?.AcceptWaveform(e.Buffer, e.BytesRecorded);
 				}
 				finally
@@ -83,11 +83,13 @@ namespace voskwpf.Models
 					writer_mutex.ReleaseMutex();
 				}
 
+				try { 
+
 				string? data = recognizer?.PartialResult();
-				Json json = JsonConvert.DeserializeObject<Json>(data);
-				if ((json.Partial ?? "") != "")
+				Json? json = JsonConvert.DeserializeObject<Json>(data ?? "");
+				if ((json?.Partial ?? "") != "")
 				{
-					this.OnPsrtialDataReady(json.Partial);
+					this.OnPsrtialDataReady(json?.Partial);
 				}
 				
 			}
@@ -100,7 +102,7 @@ namespace voskwpf.Models
 		{
 			Debug.WriteLine("start thread: " + Thread.CurrentThread.ManagedThreadId);
 
-			Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
+			Model dict = new /*Model(@"C:\Sound\vosk-model-small-en-us-0.15");*/ Model(@"C:\sound\vosk-model-en-us-0.22");
 			recognizer = null;
 			recognizer = new VoskRecognizer(dict, 16000f);
 			WaveInEvent waveIn = new WaveInEvent();
@@ -123,13 +125,13 @@ namespace voskwpf.Models
 			{
 				//Thread.Sleep(1000);
 				bool inner = IsWorking;
-				await Task.Delay(500);
+				await Task.Delay(250);
 			}
 			Debug.WriteLine("end thread: " + Thread.CurrentThread.ManagedThreadId);
 
 			waveIn.StopRecording();
 
-
+			return;
 		}
 
 		public VoskModel() 
