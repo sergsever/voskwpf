@@ -1,0 +1,19 @@
+﻿<Window x:Class="voskwpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:voskwpf.ViewModels"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+	<Window.DataContext>
+		<local:VoskViewModel />
+	</Window.DataContext>
+	<Grid>
+		<Button Content="Запись" Command="{Binding Record}"  HorizontalAlignment="Left" Margin="29,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.913,-5.038" Height="44" Width="74">
+		</Button>
+		<TextBox Text="{Binding Path=RecognisedText}" HorizontalAlignment="Left" Margin="29,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="697" Height="292"/>
+	</Grid>
+
+
+</Window>
