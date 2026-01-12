@@ -18,6 +18,14 @@ namespace voskwpf.Models
 			this.PartialData = data;
 		}
 	}
+
+	public class RecordingStateEventArgs
+	{
+		public bool IsRecording { get; set; }
+		public RecordingStateEventArgs(bool isRecording)
+		{
+			this.IsRecording = isRecording; }
+	}
 	public class VoskModel
 	{
 		// синхронизировать!
@@ -31,6 +39,7 @@ namespace voskwpf.Models
 		Thread voskLoop;
 
 		public event EventHandler<PartialDataEventArgs>? PartialDataReady;
+		public event EventHandler<RecordingStateEventArgs>? RecordingStateChanged;
 
 		public void OnPsrtialDataReady(string partial)
 		{
@@ -40,6 +49,15 @@ namespace voskwpf.Models
 				PartialDataReady.Invoke(this, args);
 			}
 		}
+
+		public void OnRecordingState(bool isrecording)
+			{
+				if(RecordingStateChanged != null)
+				{
+					RecordingStateEventArgs args = new RecordingStateEventArgs(isrecording);
+					RecordingStateChanged.Invoke(this, args);
+				}
+			}
 
 		public void Start()
 		{
@@ -52,10 +70,14 @@ namespace voskwpf.Models
 			}
 		}
 
-		public bool IsWorking { get; private set; } 
+		public bool IsWorking { get; private set; }
+
+		public bool IsRecording { get;
+			private set; }
 		public void Stop()
 		{
 			IsWorking = false;
+			OnRecordingState(false);
 
 			voskLoop.Join();
 			Debug.WriteLine("End thread: " + voskLoop.ManagedThreadId);
@@ -64,6 +86,14 @@ namespace voskwpf.Models
 			
 		}
 
+			private void StateOfRecording(object? sender, StoppedEventArgs e)
+			{
+			if (e.Exception != null)
+			{
+				Debug.WriteLine("Recording exception: " + e.Exception.Message);
+			}
+				OnRecordingState(false);
+			}
 
 
 		private void SomeRecorded(object? sender, WaveInEventArgs e)
@@ -110,6 +140,7 @@ namespace voskwpf.Models
 			recognizer = new VoskRecognizer(dict, 16000f);
 			WaveInEvent waveIn = new WaveInEvent();
 			waveIn.DataAvailable += model.SomeRecorded;
+				waveIn.RecordingStopped += model.StateOfRecording;
 			waveIn.WaveFormat = new WaveFormat(16000, 1);
 			await Task.Delay(1000);
 			writer_mutex.WaitOne();
@@ -117,6 +148,8 @@ namespace voskwpf.Models
 			{
 				writer = new WaveFileWriter(@"C:\sound\test.wav", waveIn.WaveFormat);
 				waveIn.StartRecording();
+					OnRecordingState(true);
+				IsRecording = true;
 
 			}
 			finally
@@ -133,6 +166,7 @@ namespace voskwpf.Models
 			Debug.WriteLine("end thread: " + Thread.CurrentThread.ManagedThreadId);
 
 			waveIn.StopRecording();
+			IsRecording = false;
 
 			return;
 		}

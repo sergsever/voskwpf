@@ -23,9 +23,20 @@ namespace voskwpf.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private string _recognisedText;
+		private string? _recognisedText;
+		private bool _isRecording;
 
-		public string RecognisedText
+
+		public bool IsRecording { get { return _isRecording; }
+						private set
+			{
+				if (_isRecording != value) {
+					_isRecording = value;
+					OnPropertyChanged("IsRecording");
+						};
+			}
+		}
+		public string? RecognisedText
 		{
 			get { return _recognisedText; }
 			set
@@ -59,10 +70,13 @@ namespace voskwpf.ViewModels
 					model.Stop();
 					words.Clear();
 					model.Start();
+					IsRecording = true;
 				}
 				else
 				{
 					model.Start();
+					IsRecording = true;
+
 				}
 			}
 			finally
@@ -106,22 +120,36 @@ namespace voskwpf.ViewModels
 			}
 			//RecognisedText += args.PartialData;
 		}
-		public VoskViewModel()
+
+		private void RecordingStateEventHandler(object sender, RecordingStateEventArgs args)
 		{
-			words = new List<string>();
-			model_mutex.WaitOne();
-			try
+			if (args.IsRecording)
 			{
-				this.model = App.Services.GetService<VoskModel>();
-
-
-				this.RecognisedText = "sample";
-				model.PartialDataReady += VoskEventHandler;
+				this.IsRecording = true;
 			}
-			finally { 
-				model_mutex.ReleaseMutex(); 
+			else
+			{
+				this.IsRecording = false;
 			}
-			//Record = new WPFCommand((obj) => { DoRecord(obj); }); 
 		}
+				public VoskViewModel()
+				{
+					words = new List<string>();
+					model_mutex.WaitOne();
+					try
+					{
+						this.model = App.Services.GetService<VoskModel>();
+
+
+						this.RecognisedText = "sample";
+				this.IsRecording = false;
+						model.PartialDataReady += VoskEventHandler;
+						model.RecordingStateChanged += RecordingStateEventHandler;
+					}
+					finally {
+						model_mutex.ReleaseMutex();
+					}
+					//Record = new WPFCommand((obj) => { DoRecord(obj); }); 
+				}
 	}
 }

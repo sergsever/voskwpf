@@ -5,14 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:voskwpf.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="532" Width="800">
 	<Window.DataContext>
 		<local:VoskViewModel />
 	</Window.DataContext>
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="6*"/>
+			<ColumnDefinition Width="19*"/>
+		</Grid.ColumnDefinitions>
 		<Button Content="Запись" Command="{Binding Record}"  HorizontalAlignment="Left" Margin="29,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.913,-5.038" Height="44" Width="74">
 		</Button>
-		<TextBox Text="{Binding Path=RecognisedText}" HorizontalAlignment="Left" Margin="29,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="697" Height="292"/>
+		<TextBox Text="{Binding Path=RecognisedText}" HorizontalAlignment="Left" Margin="29,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="697" Height="292" Grid.ColumnSpan="2"/>
+		<CheckBox Content="CheckBox" IsChecked="{Binding IsRecording, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" HorizontalAlignment="Left" Margin="49,50,0,0" VerticalAlignment="Top" Grid.Column="1"/>
 	</Grid>
 
 
