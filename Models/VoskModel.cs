@@ -33,6 +33,7 @@ namespace voskwpf.Models
 		//private static object writer_lock = new object(); 
 		private static Mutex writer_mutex = new Mutex();
 		static VoskRecognizer? recognizer;
+		WaveInEvent? waveIn = null;
 		//private static Model? dictionary = null;
 
 		//private bool isWorking = true;
@@ -52,6 +53,8 @@ namespace voskwpf.Models
 
 		public void OnRecordingState(bool isrecording)
 			{
+				Debug.WriteLine("Recording state: " +  isrecording);
+			if (RecordingStateChanged != null)
 				if(RecordingStateChanged != null)
 				{
 					RecordingStateEventArgs args = new RecordingStateEventArgs(isrecording);
@@ -65,6 +68,7 @@ namespace voskwpf.Models
 			if (!IsWorking)
 			{
 				IsWorking = true;
+				IsRecording = false;
 				voskLoop = new Thread(() => Init(this));
 				voskLoop.Start();
 			}
@@ -73,13 +77,19 @@ namespace voskwpf.Models
 		public bool IsWorking { get; private set; }
 
 		public bool IsRecording { get;
-			private set; }
+			private set; 
+		}
 		public void Stop()
 		{
 			IsWorking = false;
-			OnRecordingState(false);
 
 			voskLoop.Join();
+			waveIn?.StopRecording();
+			writer?.Dispose();
+			writer = null;
+			Debug.WriteLine("stop recording\n");
+			IsRecording = false;
+			OnRecordingState(false);
 			Debug.WriteLine("End thread: " + voskLoop.ManagedThreadId);
 
 			//voskLoop.Interrupt();
@@ -88,6 +98,7 @@ namespace voskwpf.Models
 
 			private void StateOfRecording(object? sender, StoppedEventArgs e)
 			{
+				Debug.WriteLine("Recording: " + e.ToString());
 			if (e.Exception != null)
 			{
 				Debug.WriteLine("Recording exception: " + e.Exception.Message);
@@ -98,23 +109,25 @@ namespace voskwpf.Models
 
 		private void SomeRecorded(object? sender, WaveInEventArgs e)
 		{
-			
-				Console.WriteLine("Event:\n");
-				
-				writer_mutex.WaitOne();
-				try { 
-				
-					writer?.Write(e.Buffer, 0, e.BytesRecorded);
 
-					//recognizer?.Reset();
-					recognizer?.AcceptWaveform(e.Buffer, e.BytesRecorded);
+			//Console.WriteLine("Event:\n");
+
+
+			try
+			{
+				writer_mutex.WaitOne();
+				try
+				{
+
+					writer?.Write(e.Buffer, 0, e.BytesRecorded);
 				}
 				finally
 				{
 					writer_mutex.ReleaseMutex();
 				}
 
-				try { 
+				recognizer?.Reset();
+				recognizer?.AcceptWaveform(e.Buffer, e.BytesRecorded);
 
 				string? data = recognizer?.PartialResult();
 				Json? json = JsonConvert.DeserializeObject<Json>(data ?? "");
@@ -122,50 +135,66 @@ namespace voskwpf.Models
 				{
 					this.OnPsrtialDataReady(json?.Partial);
 				}
-				
+
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine("exception: " + ex.ToString());
 			}
+			finally
+			{
+				//writer_mutex.ReleaseMutex();
+			}
 		}
 		protected async Task Init(VoskModel model)
 		{
-			Debug.WriteLine("start thread: " + Thread.CurrentThread.ManagedThreadId);
-
-				Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
-				//Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22");
-			
-			recognizer = null;
-			recognizer = new VoskRecognizer(dict, 16000f);
-			WaveInEvent waveIn = new WaveInEvent();
-			waveIn.DataAvailable += model.SomeRecorded;
-				waveIn.RecordingStopped += model.StateOfRecording;
-			waveIn.WaveFormat = new WaveFormat(16000, 1);
-			await Task.Delay(1000);
-			writer_mutex.WaitOne();
 			try
 			{
-				writer = new WaveFileWriter(@"C:\sound\test.wav", waveIn.WaveFormat);
-				waveIn.StartRecording();
-					OnRecordingState(true);
-				IsRecording = true;
+				Debug.WriteLine("start thread: " + Thread.CurrentThread.ManagedThreadId);
+				
 
+				writer_mutex.WaitOne();
+				try
+				{
+					writer = new WaveFileWriter(@"C:\sound\test.wav", waveIn?.WaveFormat);
+				}
+				finally
+				{
+					writer_mutex.ReleaseMutex();
+				}
+
+				
+
+
+				await Task.Delay(1000);
+				if (!IsRecording)
+				{
+					waveIn?.StartRecording();
+					Debug.WriteLine("start record\n");
+					IsRecording = true;
+				}
+				OnRecordingState(true);
+				//IsRecording = true;
+				while (IsWorking)
+				{
+					//Thread.Sleep(1000);
+					bool inner = IsWorking;
+					await Task.Delay(250);
+				}
+				
+				Debug.WriteLine("end thread: " + Thread.CurrentThread.ManagedThreadId);
+
+
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine("Init ex " + ex.Message);
 			}
 			finally
 			{
 				writer_mutex.ReleaseMutex();
 			}
 
-			while (IsWorking)
-			{
-				//Thread.Sleep(1000);
-				bool inner = IsWorking;
-				await Task.Delay(250);
-			}
-			Debug.WriteLine("end thread: " + Thread.CurrentThread.ManagedThreadId);
-
-			waveIn.StopRecording();
 			IsRecording = false;
 
 			return;
@@ -174,6 +203,16 @@ namespace voskwpf.Models
 		public VoskModel() 
 		{
 			IsWorking = false;
+			Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
+			//Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22");
+
+			recognizer = new VoskRecognizer(dict, 16000f);
+			waveIn = new WaveInEvent();
+			waveIn.DataAvailable += SomeRecorded;
+			waveIn.RecordingStopped += StateOfRecording;
+			waveIn.WaveFormat = new WaveFormat(16000, 1);
+
+
 			//voskLoop = new Thread(() => Init(this));
 			//voskLoop.Start();
 

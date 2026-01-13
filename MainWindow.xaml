@@ -17,7 +17,7 @@
 		<Button Content="Запись" Command="{Binding Record}"  HorizontalAlignment="Left" Margin="29,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.913,-5.038" Height="44" Width="74">
 		</Button>
 		<TextBox Text="{Binding Path=RecognisedText}" HorizontalAlignment="Left" Margin="29,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="697" Height="292" Grid.ColumnSpan="2"/>
-		<CheckBox Content="CheckBox" IsChecked="{Binding IsRecording, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" HorizontalAlignment="Left" Margin="49,50,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+		<CheckBox Content="Запись" IsChecked="{Binding IsRecording, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" HorizontalAlignment="Left" Margin="49,50,0,0" VerticalAlignment="Top" Grid.Column="1"/>
 	</Grid>
 
 

@@ -24,7 +24,7 @@ namespace voskwpf.ViewModels
 		}
 
 		private string? _recognisedText;
-		private bool _isRecording;
+		private bool _isRecording = false;
 
 
 		public bool IsRecording { get { return _isRecording; }
@@ -60,28 +60,34 @@ namespace voskwpf.ViewModels
 
 		public void DoRecord()
 		{
-			model_mutex.WaitOne();
 			try
 			{
-				words.Clear();
-				RecognisedText = "";
-				if (model.IsWorking)
+				lock (model_mutex)
 				{
-					model.Stop();
 					words.Clear();
-					model.Start();
-					IsRecording = true;
-				}
-				else
-				{
-					model.Start();
-					IsRecording = true;
+					RecognisedText = "";
+					if (model.IsWorking)
+					{
+						model.Stop();
+						words.Clear();
+						model.Start();
+						//IsRecording = true;
+					}
+					else
+					{
+						model.Start();
+						//IsRecording = true;
 
+					}
 				}
+			}
+			catch(Exception ex)
+			{
+				Debug.WriteLine("Start ex: " + ex.Message);
 			}
 			finally
 			{
-				model_mutex.ReleaseMutex();
+				//model_mutex.ReleaseMutex();
 			}
 		}
 
@@ -96,7 +102,7 @@ namespace voskwpf.ViewModels
 					RecognisedText = "";
 					words.Clear();
 
-
+					/*
 					model_mutex.WaitOne();
 					try
 					{
@@ -108,6 +114,7 @@ namespace voskwpf.ViewModels
 					{
 						model_mutex.ReleaseMutex();
 					}
+					*/
 				}
 
 				words.Add(aword);
@@ -126,10 +133,12 @@ namespace voskwpf.ViewModels
 			if (args.IsRecording)
 			{
 				this.IsRecording = true;
+				OnPropertyChanged("IsRecording");
 			}
 			else
 			{
 				this.IsRecording = false;
+				OnPropertyChanged("IsRecording");
 			}
 		}
 				public VoskViewModel()
@@ -142,7 +151,7 @@ namespace voskwpf.ViewModels
 
 
 						this.RecognisedText = "sample";
-				this.IsRecording = false;
+				//this.IsRecording = false;
 						model.PartialDataReady += VoskEventHandler;
 						model.RecordingStateChanged += RecordingStateEventHandler;
 					}
