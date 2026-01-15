@@ -11,13 +11,7 @@ using Vosk;
 namespace voskwpf.Models
 {
 
-	public class PartialDataEventArgs
-	{
-		public string PartialData { get; set; }
-		public PartialDataEventArgs(string data) {
-			this.PartialData = data;
-		}
-	}
+	
 
 	public class RecordingStateEventArgs
 	{
@@ -26,7 +20,7 @@ namespace voskwpf.Models
 		{
 			this.IsRecording = isRecording; }
 	}
-	public class VoskModel
+	public class VoskModel : VoiceModelBase
 	{
 		// синхронизировать!
 		static WaveFileWriter? writer;
@@ -39,15 +33,15 @@ namespace voskwpf.Models
 		//private bool isWorking = true;
 		Thread voskLoop;
 
-		public event EventHandler<PartialDataEventArgs>? PartialDataReady;
+		public event EventHandler<PartialDataEventArgs>? PartialData;
 		public event EventHandler<RecordingStateEventArgs>? RecordingStateChanged;
 
 		public void OnPsrtialDataReady(string partial)
 		{
-			if (PartialDataReady != null)
+			if (PartialData != null)
 			{
 				PartialDataEventArgs args = new PartialDataEventArgs(partial);
-				PartialDataReady.Invoke(this, args);
+				PartialData.Invoke(this, args);
 			}
 		}
 
@@ -203,13 +197,13 @@ namespace voskwpf.Models
 		public VoskModel() 
 		{
 			IsWorking = false;
-			Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
-			//Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22");
+			//Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
+			Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22-lgraph");
 
 			recognizer = new VoskRecognizer(dict, 16000f);
 			waveIn = new WaveInEvent();
 			waveIn.DataAvailable += SomeRecorded;
-			waveIn.RecordingStopped += StateOfRecording;
+			//waveIn.RecordingStopped += StateOfRecording;
 			waveIn.WaveFormat = new WaveFormat(16000, 1);
 
 

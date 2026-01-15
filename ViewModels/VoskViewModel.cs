@@ -91,7 +91,7 @@ namespace voskwpf.ViewModels
 			}
 		}
 
-		private void VoskEventHandler(object sender, PartialDataEventArgs args)
+		private void VoiceEventHandler(object sender, PartialDataEventArgs args)
 		{
 			string aword = args.PartialData.Trim();
 			if (aword != word)
@@ -152,8 +152,8 @@ namespace voskwpf.ViewModels
 
 						this.RecognisedText = "sample";
 				//this.IsRecording = false;
-						model.PartialDataReady += VoskEventHandler;
-						model.RecordingStateChanged += RecordingStateEventHandler;
+						model.PartialData += VoiceEventHandler;
+						//model.RecordingStateChanged += RecordingStateEventHandler;
 					}
 					finally {
 						model_mutex.ReleaseMutex();
