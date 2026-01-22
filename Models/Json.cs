@@ -8,6 +8,6 @@ namespace voskwpf.Models
 {
 	internal class Json
 	{
-		public string Partial { get; set; }
+		public string Text { get; set; }
 	}
 }
