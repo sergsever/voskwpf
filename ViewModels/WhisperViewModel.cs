@@ -8,8 +8,8 @@ using voskwpf.Models;
 
 namespace voskwpf.ViewModels
 {
-	public class VoskViewModel : VoiceViewModel
+	public class WhisperViewModel : VoiceViewModel
 	{
-		private VoskModel model;
+		private WhisperModel model;
 	}
 }

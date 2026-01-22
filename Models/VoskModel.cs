@@ -56,7 +56,7 @@ namespace voskwpf.Models
 				}
 			}
 
-		public void Start()
+		public virtual void Start()
 		{
 
 			if (!IsWorking)

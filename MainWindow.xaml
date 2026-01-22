@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="532" Width="800">
 	<Window.DataContext>
-		<local:VoskViewModel />
+		<local:VoiceViewModel />
 	</Window.DataContext>
 	<Grid>
 		<Grid.ColumnDefinitions>

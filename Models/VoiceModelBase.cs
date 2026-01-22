@@ -12,12 +12,6 @@ namespace voskwpf.Models
 {
 	public class VoiceModelBase : IVoiceModel 
 	{ 
-	
-	
-
-
-
-
 		public class RecordingStateEventArgs
 		{
 			public bool IsRecording { get; set; }
@@ -27,19 +21,19 @@ namespace voskwpf.Models
 			}
 		}
 			// синхронизировать!
-			static WaveFileWriter? writer;
+			protected static WaveFileWriter? writer = null;
 			//private static object writer_lock = new object(); 
-			private static Mutex writer_mutex = new Mutex();
-			WaveInEvent? waveIn = null;
+			protected static Mutex writer_mutex = new Mutex();
+			protected WaveInEvent? waveIn = null;
 			//private static Model? dictionary = null;
 
 			//private bool isWorking = true;
-			Thread? recogniseLoop;
+			protected Thread? recogniseLoop;
 
 			public event EventHandler<PartialDataEventArgs>? PartialData;
 			public event EventHandler<RecordingStateEventArgs>? RecordingStateChanged;
 
-			public void OnPartialDataReady(string partial)
+			protected virtual void OnPartialDataReady(string partial)
 			{
 				if (PartialData != null)
 				{
@@ -59,15 +53,17 @@ namespace voskwpf.Models
 					}
 			}
 
-			public void Start()
+		protected virtual Task InitAsync(IVoiceModel model) { return Task.CompletedTask;  }
+
+			public virtual void Start()
 			{
 
 				if (!IsWorking)
 				{
 					IsWorking = true;
 					IsRecording = false;
-					recogniseLoop = new Thread(() => InitAsync(this));
-					recogniseLoop.Start();
+					//recogniseLoop = new Thread(() => InitAsync(this));
+					//recogniseLoop.Start();
 				}
 			}
 
@@ -78,7 +74,7 @@ namespace voskwpf.Models
 				get;
 				private set;
 			}
-			public void Stop()
+			public virtual void Stop()
 			{
 				IsWorking = false;
 
@@ -95,19 +91,15 @@ namespace voskwpf.Models
 
 			}
 
-			private void StateOfRecording(object? sender, StoppedEventArgs e)
-			{
-				Debug.WriteLine("Recording: " + e.ToString());
-				if (e.Exception != null)
-				{
-					Debug.WriteLine("Recording exception: " + e.Exception.Message);
-				}
-				OnRecordingState(false);
-			}
+		protected virtual void SomeRecorded(object? sender, WaveInEventArgs e){}
 
 
-			protected virtual void SomeRecorded(object? sender, WaveInEventArgs e)
-			{
+		public virtual void OnRecordingStopped(object? sender, StoppedEventArgs e){}
+		
+
+		
+		
+			/*{
 
 				//Console.WriteLine("Event:\n");
 
@@ -198,19 +190,19 @@ namespace voskwpf.Models
 				IsRecording = false;
 
 				return;
-			}
+			}*/
 
 			public VoiceModelBase()
 			{
 				IsWorking = false;
 				//Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
-				Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22-lgraph");
+				//Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22-lgraph");
 
 				//recognizer = new VoskRecognizer(dict, 16000f);
-				waveIn = new WaveInEvent();
-				waveIn.DataAvailable += SomeRecorded;
+				//waveIn = new WaveInEvent();
+				//waveIn.DataAvailable += SomeRecorded;
 				//waveIn.RecordingStopped += StateOfRecording;
-				waveIn.WaveFormat = new WaveFormat(16000, 1);
+				//waveIn.WaveFormat = new WaveFormat(16000, 1);
 
 
 				//voskLoop = new Thread(() => Init(this));

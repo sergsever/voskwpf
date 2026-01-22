@@ -14,8 +14,12 @@ namespace voskwpf.Models
 			this.PartialData = data;
 		}
 	}
-	internal interface IVoiceModel
+	public interface IVoiceModel
 	{
 		public event EventHandler<PartialDataEventArgs>? PartialData;
+		public bool IsWorking { get; }
+		public void Start();
+		public void Stop();
+
 	}
 }

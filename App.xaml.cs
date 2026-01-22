@@ -38,8 +38,19 @@ namespace voskwpf
 
 		private void ConfigureServices(IServiceCollection services)
 		{
-			services.AddSingleton<VoskModel>();
-			services.AddSingleton<VoskViewModel>();
+			string engine = ConfigurationSettings.AppSettings["engine"];
+			if (engine == "vosk")
+			{
+				services.AddSingleton<VoskModel>();
+				services.AddSingleton<VoskViewModel>();
+
+			}
+			else
+			{
+				services.AddSingleton<WhisperModel>();
+
+			}
+
 			services.AddSingleton<MainWindow>();
 
 		}
