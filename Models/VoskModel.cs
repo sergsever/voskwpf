@@ -2,6 +2,7 @@
 using Microsoft.VisualBasic;
 using NAudio.Wave;
 using Newtonsoft.Json;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -24,6 +25,7 @@ namespace voskwpf.Models
 	public class VoskModel : IVoiceModel
 	{
 		private readonly string WAVE_PATH = @"C:\sound\test.wav";
+		private readonly string DICT_PATH = "";
 
 		// синхронизировать!
 		private  WaveFileWriter? writer;
@@ -128,7 +130,8 @@ namespace voskwpf.Models
 		{
 			IsWorking = false;
 			//Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
-			Model dict = new Model(@"C:\sound\vosk-model-en-us-0.22-lgraph");
+			this.DICT_PATH = ConfigurationManager.AppSettings["Vosk_dict"];
+			Model dict = new Model(this.DICT_PATH);
 			recognizer = new VoskRecognizer(dict, 16000f);
 		}
 	}
