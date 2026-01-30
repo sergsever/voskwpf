@@ -153,7 +153,7 @@ namespace voskwpf.ViewModels
 						
 
 
-					this.RecognisedText = "sample";
+					this.RecognisedText = "";
 				//this.IsRecording = false;
 						model.PartialData += new EventHandler<PartialDataEventArgs>( this.VoiceEventHandler);
 				model.RecordingStateChange += new EventHandler<RecordingStateChangeEventArgs>(this.RecordingStateChangeHandler);

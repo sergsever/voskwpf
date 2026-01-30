@@ -14,10 +14,11 @@
 			<ColumnDefinition Width="6*"/>
 			<ColumnDefinition Width="19*"/>
 		</Grid.ColumnDefinitions>
-		<Button Content="{Binding Path=ButtonTitle, Mode=OneWay}" Command="{Binding Record}"  HorizontalAlignment="Left" Margin="29,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.913,-5.038" Height="44" Width="74">
+		<Button Content="{Binding Path=ButtonTitle, Mode=OneWay}" Command="{Binding Record}"  HorizontalAlignment="Center" Margin="0,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="-5.913,-5.038" Height="44" Width="172">
 		</Button>
 		<TextBox Text="{Binding Path=RecognisedText}" HorizontalAlignment="Left" Margin="29,113,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="697" Height="292" Grid.ColumnSpan="2"/>
 		<CheckBox Content="Запись" IsChecked="{Binding IsRecording, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" HorizontalAlignment="Left" Margin="49,50,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+		<Label Content="Распознанный текст:" HorizontalAlignment="Left" Margin="29,87,0,0" VerticalAlignment="Top" Width="148"/>
 	</Grid>
 
 
