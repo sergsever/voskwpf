@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="install\**" />
+    <EmbeddedResource Remove="install\**" />
+    <None Remove="install\**" />
+    <Page Remove="install\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="voice.ico" />
   </ItemGroup>
 

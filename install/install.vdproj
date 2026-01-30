@@ -3111,7 +3111,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:voicewpf"
         "ProductCode" = "8:{CC9D57BF-22B0-490C-A981-AFA076EFA2F4}"
-        "PackageCode" = "8:{9A5D65B9-AAE6-4A51-A6CD-1AC516CB84EF}"
+        "PackageCode" = "8:{0153BD36-E8E7-41BE-9367-117231BE40DE}"
         "UpgradeCode" = "8:{ED9A7799-0C44-4D46-9E1D-F90D426CB294}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

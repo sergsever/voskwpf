@@ -15,13 +15,7 @@ namespace voskwpf.Models
 
 	
 
-	public class RecordingStateEventArgs
-	{
-		public bool IsRecording { get; set; }
-		public RecordingStateEventArgs(bool isRecording)
-		{
-			this.IsRecording = isRecording; }
-	}
+	
 	public class VoskModel : IVoiceModel
 	{
 		private readonly string WAVE_PATH = @"C:\sound\test.wav";
@@ -39,9 +33,9 @@ namespace voskwpf.Models
 		Thread voskLoop;
 
 		public event EventHandler<PartialDataEventArgs>? PartialData;
-		public event EventHandler<RecordingStateEventArgs>? RecordingStateChanged;
+		public event EventHandler<RecordingStateChangeEventArgs>? RecordingStateChange;
 
-		public void OnPartialDataReady(string partial)
+		private void OnPartialDataReady(string partial)
 		{
 			if (PartialData != null)
 			{
@@ -50,16 +44,15 @@ namespace voskwpf.Models
 			}
 		}
 
-		public void OnRecordingState(bool isrecording)
+		private void OnRecordingStateChange(bool isrecording)
+		{
+			if (RecordingStateChange != null)
 			{
-				Debug.WriteLine("Recording state: " +  isrecording);
-			if (RecordingStateChanged != null)
-				if(RecordingStateChanged != null)
-				{
-					RecordingStateEventArgs args = new RecordingStateEventArgs(isrecording);
-					RecordingStateChanged.Invoke(this, args);
-				}
+				RecordingStateChangeEventArgs args = new RecordingStateChangeEventArgs(isrecording);
+				RecordingStateChange.Invoke(this, args);
 			}
+		}
+
 
 		public virtual async void Start()
 		{
@@ -73,6 +66,7 @@ namespace voskwpf.Models
 				this.waveIn.StartRecording();
 				this.IsWorking = true;
 				this.IsRecording = true;
+				this.OnRecordingStateChange(true);
 			}
 		}
 
@@ -86,6 +80,7 @@ namespace voskwpf.Models
 			this.waveIn.StopRecording();
 			this.IsWorking = false;
 			this.IsRecording = false;
+			this.OnRecordingStateChange(false);
 			
 		}
 
@@ -131,6 +126,9 @@ namespace voskwpf.Models
 			IsWorking = false;
 			//Model dict = new Model(@"C:\Sound\vosk-model-small-en-us-0.15");
 			this.DICT_PATH = ConfigurationManager.AppSettings["Vosk_dict"];
+#if DEBUG
+			this.DICT_PATH = @"C:\Sound\vosk-model-en-us-0.22-lgraph";
+#endif
 			Model dict = new Model(this.DICT_PATH);
 			recognizer = new VoskRecognizer(dict, 16000f);
 		}

@@ -34,8 +34,14 @@ namespace voskwpf.ViewModels
 				if (_isRecording != value) {
 					_isRecording = value;
 					OnPropertyChanged("IsRecording");
+					OnPropertyChanged("ButtonTitle");
 						};
 			}
+		}
+
+		public string ButtonTitle
+		{
+			get { return this.IsRecording ? "Остановить,распознать" : "Запись"; }
 		}
 		public string? RecognisedText
 		{
@@ -92,7 +98,7 @@ namespace voskwpf.ViewModels
 			}
 		}
 
-		private void VoiceEventHandler(object sender, PartialDataEventArgs args)
+		private void VoiceEventHandler(object? sender, PartialDataEventArgs args)
 		{
 			string aword = args.PartialData.Trim();
 			if (aword != word)
@@ -129,19 +135,11 @@ namespace voskwpf.ViewModels
 			//RecognisedText += args.PartialData;
 		}
 
-		private void RecordingStateEventHandler(object sender, RecordingStateEventArgs args)
+	private void RecordingStateChangeHandler(object? sender, RecordingStateChangeEventArgs args)
 		{
-			if (args.IsRecording)
-			{
-				this.IsRecording = true;
-				OnPropertyChanged("IsRecording");
-			}
-			else
-			{
-				this.IsRecording = false;
-				OnPropertyChanged("IsRecording");
-			}
+			this.IsRecording = args.IsRecording;
 		}
+
 				public VoiceViewModel()
 				{
 					words = new List<string>();
@@ -157,8 +155,8 @@ namespace voskwpf.ViewModels
 
 					this.RecognisedText = "sample";
 				//this.IsRecording = false;
-						model.PartialData += VoiceEventHandler;
-						//model.RecordingStateChanged += RecordingStateEventHandler;
+						model.PartialData += new EventHandler<PartialDataEventArgs>( this.VoiceEventHandler);
+				model.RecordingStateChange += new EventHandler<RecordingStateChangeEventArgs>(this.RecordingStateChangeHandler);
 					}
 					finally {
 						model_mutex.ReleaseMutex();

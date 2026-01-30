@@ -24,6 +24,7 @@ namespace voskwpf.Models
 		protected Thread? whisperLoop = null;
 
 		public event EventHandler<PartialDataEventArgs>? PartialData;
+		public event EventHandler<RecordingStateChangeEventArgs>? RecordingStateChange;
 
 		private void OnRecognise(string data)
 		{
@@ -31,6 +32,16 @@ namespace voskwpf.Models
 			if (this.PartialData != null)
 				this.PartialData.Invoke(this, args);
 		}
+
+		private void OnRecordingStateChange(bool isrecording)
+		{
+			if (RecordingStateChange != null)
+			{
+				RecordingStateChangeEventArgs args = new RecordingStateChangeEventArgs(isrecording);
+				RecordingStateChange.Invoke(this, args);
+			}
+		}
+
 
 		public bool IsWorking { get; private set; }
 
@@ -54,6 +65,7 @@ namespace voskwpf.Models
 				}
 				this.waveIn.StartRecording();
 				this.IsRecording = true;
+				this.OnRecordingStateChange(true);
 
 
 				//Init(this);
@@ -73,6 +85,7 @@ namespace voskwpf.Models
 			{
 				this.waveIn.StopRecording();
 				this.IsRecording = false;
+				this.OnRecordingStateChange(false);
 			}
 		}
 
